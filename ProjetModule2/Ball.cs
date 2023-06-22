@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ProjetModule2;
 using Scenes;
 using Services;
 using System;
@@ -26,6 +27,9 @@ namespace BrickBreaker
         private float shakeDuration = 0.1f;
         private float shakeTimer = 0f;
 
+        private Type[] powerUpTypes = { typeof(PowerUpLife), typeof(PowerDown), typeof(PowerUpDisco) };
+        private CollisionManager collisionManager = ServiceLocator.Get<CollisionManager>();
+
         public Ball(Vector2 Velocity)
         {
             texture = ServiceLocator.Get<IAssetsManager>().GetAsset<Texture2D>("balle");
@@ -44,8 +48,10 @@ namespace BrickBreaker
 
             foreach (Brick brick in Scene.GetGameObjects<Brick>())
             {
-                if (BounceOn(brick.CollisionBox, gameTime))
+                if (collisionManager.BounceOn(brick.CollisionBox, gameTime, position, velocity, _speed, texture))
                 {
+                    velocity = collisionManager.BallBounceOn(brick.CollisionBox, gameTime, position, velocity, _speed, texture);
+
                     _colorChange = true;
 
                     foreach (Brick otherBrick in Scene.GetGameObjects<Brick>())
@@ -76,8 +82,12 @@ namespace BrickBreaker
                     // Si le nombre de briques "free" atteint 2, créez un bonus
                     if (brick.free && freeBrickCount % 2 == 0)
                     {
-                        Vector2 powerUpLifePosition = brick.position; // Position du bonus (peut être ajustée selon vos besoins)
-                        PowerUpLife powerUpLife = new PowerUpLife(powerUpLifePosition);
+                        Vector2 powerUpPosition = brick.position;
+                        // Sélectionner un type de bonus aléatoire
+                        Type randomPowerUpType = powerUpTypes[random.Next(powerUpTypes.Length)];
+                        // Créer une instance du type de bonus sélectionné
+                        PowerUp powerUp = (PowerUp)Activator.CreateInstance(randomPowerUpType, powerUpPosition);
+
                         freeBrickCount = 0;
                     }
 
@@ -86,7 +96,7 @@ namespace BrickBreaker
 
             foreach (Pad pad in Scene.GetGameObjects<Pad>())
             {
-                BounceOn(pad.CollisionBox, gameTime);
+                velocity = collisionManager.BallBounceOn(pad.CollisionBox, gameTime, position, velocity, _speed, texture);
 
             }
 
@@ -144,36 +154,6 @@ namespace BrickBreaker
                 GameManager gameManager = ServiceLocator.Get<GameManager>();
                 gameManager.DecreaseLives();
             }
-        }
-
-        private Rectangle NextHorizontalCollisionBox(GameTime gameTime)
-        {
-            float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            Vector2 nextPosition = position + new Vector2(velocity.X * _speed * dt, 0);
-            return new Rectangle((int)(nextPosition.X - texture.Width / 2), (int)(nextPosition.Y - texture.Height / 2), texture.Width, texture.Height);
-        }
-
-        private Rectangle NextVerticalCollisionBox(GameTime gameTime)
-        {
-            float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            Vector2 nextPosition = position + new Vector2(0, velocity.Y * _speed * dt);
-            return new Rectangle((int)(nextPosition.X - texture.Width / 2), (int)(nextPosition.Y - texture.Height / 2), texture.Width, texture.Height);
-        }
-
-        public bool BounceOn(Rectangle otherCollisionBox, GameTime gameTime)
-        {
-            if (otherCollisionBox.Intersects(NextHorizontalCollisionBox(gameTime)))
-            {
-                velocity.X *= -1f;
-                return true;
-            }
-            else if (otherCollisionBox.Intersects(NextVerticalCollisionBox(gameTime)))
-            {
-                velocity.Y *= -1f;
-                return true;
-            }
-
-            return false;
         }
 
         private Color GetRandomColor()

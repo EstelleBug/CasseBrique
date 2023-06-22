@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 
 namespace BrickBreaker
 {
-    internal class PowerUpLife : PowerUp
+    internal class PowerDown : PowerUp
     {
-        public PowerUpLife(Vector2 startPosition) : base(startPosition)
+        public PowerDown(Vector2 startPosition) : base(startPosition)
         {
-            texture = ServiceLocator.Get<IAssetsManager>().GetAsset<Texture2D>("bonus_vie2");
+            texture = ServiceLocator.Get<IAssetsManager>().GetAsset<Texture2D>("malus");
             this.position = startPosition;
             Scene.Add(this);
         }
@@ -30,11 +30,11 @@ namespace BrickBreaker
                 if (collisionManager.BounceOn(pad.CollisionBox, gameTime, position, velocity, _speed, texture))
                 {
                     free = true;
-                    gameManager.IncreaseLives();
 
                 }
             }
         }
+
         public override void Draw()
         {
             base.Draw();

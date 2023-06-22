@@ -29,6 +29,11 @@ namespace Services
             score += amount;
         }
 
+        public void IncreaseLives()
+        {
+            lives++;
+        }
+
         public void DecreaseLives()
         {
             lives--;

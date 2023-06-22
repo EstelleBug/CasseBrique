@@ -1,5 +1,6 @@
 ﻿using BrickBreaker;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 
 
@@ -7,63 +8,69 @@ namespace Services
 {
     public class CollisionManager
     {
-        private List<Brick> bricks;
-        private Ball ball;
-        private Pad pad;
+        public CollisionManager() { }
 
-        public CollisionManager()
+        private Rectangle NextHorizontalCollisionBox(GameTime gameTime, Vector2 position, Vector2 velocity, float speed, Texture2D texture)
         {
+            float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            Vector2 nextPosition = position + new Vector2(velocity.X * speed * dt, 0);
+            return new Rectangle((int)(nextPosition.X - texture.Width / 2), (int)(nextPosition.Y - texture.Height / 2), texture.Width, texture.Height);
         }
-
-        public void Update(GameTime gameTime)
+        private Rectangle NextVerticalCollisionBox(GameTime gameTime, Vector2 position, Vector2 velocity, float speed, Texture2D texture)
         {
-            HandleBrickCollisions(gameTime);
-            HandlePadCollision(gameTime);
-            HandleWallCollision();
+            float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            Vector2 nextPosition = position + new Vector2(0, velocity.Y * speed * dt);
+            return new Rectangle((int)(nextPosition.X - texture.Width / 2), (int)(nextPosition.Y - texture.Height / 2), texture.Width, texture.Height);
         }
-
-        private void HandleBrickCollisions(GameTime gameTime)
+        public bool BounceOn(Rectangle otherCollisionBox, GameTime gameTime, Vector2 position, Vector2 velocity, float speed, Texture2D texture)
         {
-            foreach (Brick brick in bricks)
+            if (otherCollisionBox.Intersects(NextHorizontalCollisionBox(gameTime, position, velocity, speed, texture)))
             {
-                if (brick.CollisionBox.Intersects(ball.CollisionBox))
-                {
-                    bool brickDestroyed = brick.free;
-
-                    if (brickDestroyed)
-                    {
-                        ball.BounceOn(brick.CollisionBox, gameTime);
-                    }
-                }
+                return true;
             }
-        }
-
-        private void HandlePadCollision(GameTime gameTime)
-        {
-            if (pad.CollisionBox.Intersects(ball.CollisionBox))
+            else if (otherCollisionBox.Intersects(NextVerticalCollisionBox(gameTime, position, velocity, speed, texture)))
             {
-                ball.BounceOn(pad.CollisionBox, gameTime);
-            }
-        }
-
-        private void HandleWallCollision()
-        {
-            Point screenSize = Main._screenSize;
-
-            if (ball.position.X < 0 || ball.position.X > screenSize.X - ball.texture.Width)
-            {
-                //ball.BounceOnWall();
+                return true;
             }
 
-            if (ball.position.Y < 0)
+            return false;
+        }
+
+        public Vector2 ReflectVelocity(Vector2 velocity, Vector2 normal)
+        {
+            // Calculer le produit scalaire de la vitesse et de la normale
+            float dotProduct = Vector2.Dot(velocity, normal);
+
+            // Calculer la réflexion de la vitesse
+            Vector2 reflectedVelocity = velocity - 2f * dotProduct * normal;
+
+            return reflectedVelocity;
+        }
+
+        public Vector2 BallBounceOn(Rectangle otherCollisionBox, GameTime gameTime, Vector2 position, Vector2 velocity, float speed, Texture2D texture)
+        {
+            Vector2 newVelocity = velocity;
+
+            if (otherCollisionBox.Intersects(NextHorizontalCollisionBox(gameTime, position, velocity, speed, texture)))
             {
-                //ball.BounceOnCeiling();
+                // Calculer la normale de la surface de collision (dans ce cas, la normale X)
+                Vector2 normal = new Vector2(1, 0);
+
+                // Réfléchir la vitesse par rapport à la normale
+                newVelocity = ReflectVelocity(velocity, normal);
+            }
+            else if (otherCollisionBox.Intersects(NextVerticalCollisionBox(gameTime, position, velocity, speed, texture)))
+            {
+                // Calculer la normale de la surface de collision (dans ce cas, la normale Y)
+                Vector2 normal = new Vector2(0, 1);
+
+                // Réfléchir la vitesse par rapport à la normale
+                newVelocity = ReflectVelocity(velocity, normal);
+
             }
 
-            if (ball.position.Y - ball.texture.Height > screenSize.Y)
-            {
-                ball.free = true;
-            }
+            return newVelocity;
         }
+
     }
 }

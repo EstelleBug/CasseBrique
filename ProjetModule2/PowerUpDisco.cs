@@ -1,5 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using BrickBreaker;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
 using Scenes;
 using Services;
 using System;
@@ -8,13 +9,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BrickBreaker
+namespace ProjetModule2
 {
-    internal class PowerUpLife : PowerUp
+    internal class PowerUpDisco : PowerUp
     {
-        public PowerUpLife(Vector2 startPosition) : base(startPosition)
+        public PowerUpDisco(Vector2 startPosition) : base(startPosition)
         {
-            texture = ServiceLocator.Get<IAssetsManager>().GetAsset<Texture2D>("bonus_vie2");
+            texture = ServiceLocator.Get<IAssetsManager>().GetAsset<Texture2D>("bonus_disco");
             this.position = startPosition;
             Scene.Add(this);
         }
@@ -30,7 +31,6 @@ namespace BrickBreaker
                 if (collisionManager.BounceOn(pad.CollisionBox, gameTime, position, velocity, _speed, texture))
                 {
                     free = true;
-                    gameManager.IncreaseLives();
 
                 }
             }

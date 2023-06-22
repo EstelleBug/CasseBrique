@@ -60,7 +60,9 @@ namespace BrickBreaker
             _assetManager.LoadAsset<Texture2D>("brique_5_3", Content);
             _assetManager.LoadAsset<Texture2D>("brique_7_3", Content);
             _assetManager.LoadAsset<Texture2D>("brique_8_3", Content);
-            _assetManager.LoadAsset<Texture2D>("bonus_vie", Content);
+            _assetManager.LoadAsset<Texture2D>("bonus_vie2", Content);
+            _assetManager.LoadAsset<Texture2D>("bonus_disco", Content);
+            _assetManager.LoadAsset<Texture2D>("malus", Content);
 
             _scenesService.Register<SceneMenu>();
             _scenesService.Register<SceneGame>();
