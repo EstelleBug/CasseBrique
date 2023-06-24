@@ -1,18 +1,16 @@
-﻿using BrickBreaker;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Scenes;
 using Services;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics;
+using System;
 
-namespace ProjetModule2
+namespace BrickBreaker
 {
     internal class PowerUpDisco : PowerUp
     {
+
         public PowerUpDisco(Vector2 startPosition) : base(startPosition)
         {
             texture = ServiceLocator.Get<IAssetsManager>().GetAsset<Texture2D>("bonus_disco");
@@ -31,7 +29,14 @@ namespace ProjetModule2
                 if (collisionManager.BounceOn(pad.CollisionBox, gameTime, position, velocity, _speed, texture))
                 {
                     free = true;
+                    // Récupérer l'instance de Ball depuis la scène ou une autre source
+                    Ball ball = Scene.GetGameObjects<Ball>().FirstOrDefault() as Ball;
 
+                    // Vérifier si l'instance de Ball a été trouvée
+                    if (ball != null)
+                    {
+                        ball.SetDiscoActive(true);
+                    }
                 }
             }
         }

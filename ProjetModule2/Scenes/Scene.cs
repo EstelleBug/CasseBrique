@@ -21,17 +21,17 @@ namespace Scenes
         public virtual void Unload() { }
         public virtual void Update(GameTime gameTime) 
         {
-            for (int i = 0; i < _gameObjects.Count; i++)
-            {
-                _gameObjects[i].Update(gameTime);
-            }
-
-            for (int i =  _gameObjects.Count - 1; i >= 0; i--)
+            for (int i = _gameObjects.Count - 1; i >= 0; i--)
             {
                 if (_gameObjects[i].free)
                 {
                     _gameObjects.RemoveAt(i);
                 }
+            }
+
+            for (int i = 0; i < _gameObjects.Count; i++)
+            {
+                _gameObjects[i].Update(gameTime);
             }
         }
         public virtual void Draw() 

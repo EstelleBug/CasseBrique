@@ -21,7 +21,7 @@ namespace BrickBreaker
         public PowerUp(Vector2 startPosition)
         {
             position = startPosition;
-            texture = ServiceLocator.Get<IAssetsManager>().GetAsset<Texture2D>("bonus_vie2");
+            texture = null;
             Scene.Add(this);
         }
 

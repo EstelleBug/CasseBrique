@@ -3,7 +3,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Services;
 using System;
 using Scenes;
-using System.Runtime.CompilerServices;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace BrickBreaker
 {
@@ -26,7 +27,7 @@ namespace BrickBreaker
 
         public Brick(Vector2 position)
         {
-            texture = ServiceLocator.Get<IAssetsManager>().GetAsset<Texture2D>("brique_0_0");
+            texture = null;
             this.position = position;
             originalPosition = position;
             Scene.Add(this);
@@ -66,6 +67,44 @@ namespace BrickBreaker
         public void ResetPosition()
         {
             position = originalPosition;
+        }
+
+        public static void TransformBricksToPowerDown(float percentage)
+        {
+            List<Brick> bricks = Scene.GetGameObjects<Brick>().OfType<Brick>().ToList();
+            int bricksToTransform = (int)(bricks.Count * percentage);
+
+            // Mélanger aléatoirement la liste de briques
+            bricks = bricks.OrderBy(item => Guid.NewGuid()).ToList();
+
+
+            for (int i = 0; i < bricksToTransform; i++)
+            {
+                Brick brick = bricks[i];
+                Vector2 position = brick.position;
+                BrickPowerDown brickPowerDown = new BrickPowerDown(position);
+                // Supprimez la brique d'origine
+                brick.free = true;
+            }
+        }
+
+        public static void TransformPowerDownToBricks(Vector2 position)
+        {
+            Random random = new Random();
+            int randomNumber = random.Next(3);
+
+            if (randomNumber == 0)
+            {
+                new BrickRed(position);
+            }
+            else if (randomNumber == 1)
+            {
+                new BrickGreen(position);
+            }
+            else if (randomNumber == 2)
+            {
+                new BrickBlue(position);
+            }
         }
     }
 }

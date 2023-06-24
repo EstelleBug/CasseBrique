@@ -2,11 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using Scenes;
 using Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BrickBreaker
 {
@@ -30,6 +25,8 @@ namespace BrickBreaker
                 if (collisionManager.BounceOn(pad.CollisionBox, gameTime, position, velocity, _speed, texture))
                 {
                     free = true;
+                    // Transforme 5% des briques en briques malus
+                    Brick.TransformBricksToPowerDown(0.05f);
 
                 }
             }

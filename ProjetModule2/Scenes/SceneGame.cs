@@ -1,9 +1,7 @@
 ﻿using BrickBreaker;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Services;
 using System;
-using System.Runtime.ConstrainedExecution;
 
 namespace Scenes
 

@@ -1,10 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ProjetModule2;
 using Scenes;
 using Services;
 using System;
 using System.Diagnostics;
+using System.Linq;
 
 namespace BrickBreaker
 {
@@ -20,6 +20,10 @@ namespace BrickBreaker
         public bool free { get; set; } = false;
         public bool sticked = true;
         private bool _colorChange = false;
+
+        private bool isDiscoActive = false;
+        private float discoTimer = 0f;
+        private const float discoDuration = 3f;
 
         private Color currentColor = Color.Red;
 
@@ -54,6 +58,13 @@ namespace BrickBreaker
 
                     _colorChange = true;
 
+                    if (isDiscoActive)
+                    {
+                        brick.free = true;
+                        gameManager.IncreaseScore(20);
+                        // Changer la couleur de la balle en une couleur aléatoire à chaque mise à jour
+                    }
+
                     foreach (Brick otherBrick in Scene.GetGameObjects<Brick>())
                     {
                         otherBrick.isShaking = true;
@@ -77,6 +88,12 @@ namespace BrickBreaker
                         brick.free = true;
                         gameManager.IncreaseScore(20);
                         freeBrickCount++;
+                    }
+                    else if (brick is BrickPowerDown)
+                    {
+                        brick.free = true;
+                        Brick.TransformPowerDownToBricks(brick.position);
+                        gameManager.IncreaseScore(5);
                     }
 
                     // Si le nombre de briques "free" atteint 2, créez un bonus
@@ -105,8 +122,25 @@ namespace BrickBreaker
             if (_colorChange)
             {
                 currentColor = GetRandomColor();
-                Debug.WriteLine(GetRandomColor());
                 _colorChange = false;
+            }
+
+            if (isDiscoActive)
+            {
+                Debug.WriteLine("Discooo");
+                // Changer la couleur de la balle en une couleur aléatoire à chaque mise à jour
+                currentColor = GetDiscoColor();
+
+                discoTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+                if (discoTimer >= discoDuration)
+                {
+                    discoTimer = 0f;
+                    //isDiscoActive = false;
+                    Debug.WriteLine("Disco time is up");
+
+                    SetDiscoActive(false);
+                }
             }
 
             // Mettez à jour le timer de tremblement
@@ -156,6 +190,18 @@ namespace BrickBreaker
             }
         }
 
+        public void SetDiscoActive(bool isActive)
+        {
+            Debug.WriteLine(isActive);
+            isDiscoActive = isActive;
+
+            if (isDiscoActive == false)
+            {
+                // Réinitialiser la couleur de la balle à sa couleur par défaut
+                currentColor = Color.Red;
+            }
+        }
+
         private Color GetRandomColor()
         {
             int randomIndex = random.Next(3);
@@ -171,6 +217,13 @@ namespace BrickBreaker
                 default:
                     return Color.White;
             }
+        }
+
+        private Color GetDiscoColor()
+        {
+            Color[] colors = new Color[] { Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Purple, Color.Orange };
+            int randomIndex = random.Next(colors.Length);
+            return colors[randomIndex];
         }
 
         public void Draw()
