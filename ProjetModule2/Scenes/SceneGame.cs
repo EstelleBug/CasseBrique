@@ -2,26 +2,107 @@
 using Microsoft.Xna.Framework;
 using Services;
 using System;
+using Newtonsoft.Json;
+using System.IO;
+using static Services.LevelsLoader;
 
 namespace Scenes
 
 {
     public class SceneGame : Scene
     {
+        //private Point bounds = Main._screenSize;
+        //private Random random = new Random();
+        private UIManager _uiManager;
+        private GameManager _gameManager;
+        private LevelsLoader _levelsLoader;
 
-        private Point bounds = Main._screenSize;
-        private Random random = new Random();
-        private UIManager uiManager;
+        //private LevelData[] levels;
+
+        /*public class LevelData
+        {
+            public int[,] Bricks { get; set; }
+        }*/
         public override void Load()
         {
             base.Load();
+            _gameManager = (GameManager)ServiceLocator.Get<GameManager>();
+
+            _levelsLoader = (LevelsLoader)ServiceLocator.Get<LevelsLoader>();
+            LevelsLoader.LevelData levelData = _levelsLoader.GetCurrentLevel();
+            //levels = LoadLevels();
+
+            _uiManager = (UIManager)ServiceLocator.Get<UIManager>();
 
             new Pad();
 
             int brickWidth = 55;
             int brickHeight = 20;
 
-            for (int row = 0; row < 7; row++)
+            int rows = levelData.height;
+            int cols = levelData.width;
+
+            for (int row = 0; row < rows; row++)
+            {
+                for (int col = 0; col < cols; col++)
+                {
+                    int brickValue = levelData.bricks[row] [col];
+                    int xPos = 40 + col * brickWidth;
+                    int yPos = 40 + row * brickHeight;
+
+                    if (brickValue == 0)
+                    {
+                        continue; // Pas de brique à cette position
+                    }
+                    switch (brickValue)
+                    {
+                        case 1:
+                            new BrickRed(new Vector2(xPos, yPos));
+                            break;
+                        case 2:
+                            new BrickGreen(new Vector2(xPos, yPos));
+                            break;
+                        case 3:
+                            new BrickBlue(new Vector2(xPos, yPos));
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+
+        }
+
+        /*private LevelData[] LoadLevels()
+        {
+            int levelNumber = gameManager.Level;
+
+            string filePath = "C:\\Users\\estel\\OneDrive\\Documents\\Formation_JV\\C#\\Projet\\ProjetModule2\\ProjetModule2\\Levels\\" + $"level_{levelNumber}.json";
+            string jsonContent = File.ReadAllText(filePath);
+            Console.WriteLine(jsonContent);
+
+            LevelData[] levels = JsonConvert.DeserializeObject<LevelData[]>(jsonContent);
+
+            //string json = File.ReadAllText("C:\\Users\\estel\\OneDrive\\Documents\\Formation_JV\\C#\\Projet\\ProjetModule2\\ProjetModule2\\Levels\\" + $"level_{levelNumber}.json"); // Remplacez "levels.json" par le chemin d'accès à votre fichier JSON contenant les données des niveaux
+            //LevelData[] levels = JsonConvert.DeserializeObject<LevelData[]>(json);
+            return levels;
+        }*/
+
+        public override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
+
+        }
+
+        public override void Draw()
+        {
+            base.Draw();
+            _uiManager.Draw();
+        }
+    }
+}
+
+/*for (int row = 0; row < 7; row++)
             {
                 for (int col = 0; col < 22; col++)
                 {
@@ -43,23 +124,8 @@ namespace Scenes
                         new BrickBlue(new Vector2(xPos, yPos));
                     }
                 }
-            }
-            uiManager = (UIManager)ServiceLocator.Get<UIManager>();
-        }
+            }*/
 
-        public override void Update(GameTime gameTime)
-        {
-            base.Update(gameTime);
-
-        }
-
-        public override void Draw()
-        {
-            base.Draw();
-            uiManager.Draw();
-        }
-    }
-}
 
 /* for (int i = 50; i <= bounds.X; i += 55)
             {

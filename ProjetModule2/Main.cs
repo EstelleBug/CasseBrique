@@ -14,6 +14,7 @@ namespace BrickBreaker
         private GameManager _gameManager;
         private UIManager _UIManager;
         private CollisionManager _collisionManager;
+        private LevelsLoader _levelsLoader;
 
         public static Point _screenSize = new Point(1240, 720);
 
@@ -52,6 +53,12 @@ namespace BrickBreaker
 
             _collisionManager = new CollisionManager();
             ServiceLocator.Register<CollisionManager>(_collisionManager);
+
+            _levelsLoader = new LevelsLoader();
+            ServiceLocator.Register<LevelsLoader>(_levelsLoader);
+            _levelsLoader.Load();
+
+            _levelsLoader.SetCurrentLevel("Level 1");
 
             _assetManager.LoadAsset<SpriteFont>("PixelFont", Content);
             _assetManager.LoadAsset<Texture2D>("balle", Content);

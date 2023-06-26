@@ -19,6 +19,7 @@ namespace Services
             level = 1;
         }
 
+
         public void IncreaseScore(int amount)
         {
             score += amount;
