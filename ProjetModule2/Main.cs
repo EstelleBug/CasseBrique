@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Scenes;
 using Services;
+using System.Diagnostics;
 
 namespace BrickBreaker
 {

@@ -5,6 +5,7 @@ using System;
 using Newtonsoft.Json;
 using System.IO;
 using static Services.LevelsLoader;
+using System.Diagnostics;
 
 namespace Scenes
 
@@ -42,6 +43,8 @@ namespace Scenes
             int rows = levelData.height;
             int cols = levelData.width;
 
+
+
             for (int row = 0; row < rows; row++)
             {
                 for (int col = 0; col < cols; col++)
@@ -50,10 +53,6 @@ namespace Scenes
                     int xPos = 40 + col * brickWidth;
                     int yPos = 40 + row * brickHeight;
 
-                    if (brickValue == 0)
-                    {
-                        continue; // Pas de brique à cette position
-                    }
                     switch (brickValue)
                     {
                         case 1:
@@ -64,8 +63,6 @@ namespace Scenes
                             break;
                         case 3:
                             new BrickBlue(new Vector2(xPos, yPos));
-                            break;
-                        default:
                             break;
                     }
                 }

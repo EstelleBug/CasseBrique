@@ -1,6 +1,7 @@
 ﻿
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
@@ -16,9 +17,8 @@ namespace Services
         public void Load() 
         { 
             MemoryStream stream;
-            //string[] files = Directory.GetFiles("/Levels");
-            string[] files = Directory.GetFiles("/Users/estel/OneDrive/Documents/Formation_JV/C#/Projet/ProjetModule2/ProjetModule2/Levels/");
-        
+            string[] files = Directory.GetFiles("Levels");
+            //string[] files = Directory.GetFiles("/Users/estel/OneDrive/Documents/Formation_JV/C#/Projet/ProjetModule2/ProjetModule2/Levels/");
 
             for (int i  = 0; i < files.Length; i++)
             {
@@ -50,9 +50,11 @@ namespace Services
                 if (level.name == levelName)
                 {
                     _currentLevel = level;
+                    Debug.WriteLine(_currentLevel);
                     return;
                 }
             }
+            
         }
 
         [DataContract]
@@ -66,6 +68,11 @@ namespace Services
             public int width { get; private set; }
             [DataMember]
             public List<List<int>> bricks { get; private set;}
+
+            public override string ToString()
+            {
+                return $"{name} {height} {width} {bricks.Count}";
+            }
         }
     }
 }
