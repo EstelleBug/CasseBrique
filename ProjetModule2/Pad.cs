@@ -20,7 +20,7 @@ namespace BrickBreaker
         public Pad()
         {
             texture = ServiceLocator.Get <IAssetsManager>().GetAsset<Texture2D>("raquette");
-            position = new Vector2(Main._screenSize.X / 2 - texture.Width / 2, Main._screenSize.Y - texture.Height / 2 - 30);
+            position = new Vector2(Main._screenSize.X / 2, Main._screenSize.Y - 50);
             ball = new Ball(Vector2.Zero);
             Scene.Add(this);
         }

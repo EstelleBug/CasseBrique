@@ -71,6 +71,7 @@ namespace BrickBreaker
             _assetManager.LoadAsset<Texture2D>("bonus_vie2", Content);
             _assetManager.LoadAsset<Texture2D>("bonus_disco", Content);
             _assetManager.LoadAsset<Texture2D>("malus", Content);
+            _assetManager.LoadAsset<Texture2D>("button", Content);
 
             _scenesService.Register<SceneMenu>();
             _scenesService.Register<SceneGame>();
