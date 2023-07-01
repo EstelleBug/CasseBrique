@@ -25,7 +25,7 @@ namespace BrickBreaker
                 if (collisionManager.BounceOn(pad.CollisionBox, gameTime, position, velocity, _speed, texture))
                 {
                     free = true;
-                    gameManager.IncreaseLives();
+                    gameManager.IncreaseLives(1);
 
                 }
             }

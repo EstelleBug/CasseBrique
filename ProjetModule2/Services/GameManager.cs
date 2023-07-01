@@ -25,9 +25,9 @@ namespace Services
             score += amount;
         }
 
-        public void IncreaseLives()
+        public void IncreaseLives(int amount)
         {
-            lives++;
+            lives += amount;
         }
 
         public void DecreaseLives()
@@ -36,9 +36,16 @@ namespace Services
 
             if (lives <= 0)
             {
+                ResetGameOver();
                 IScenesService scenesService = ServiceLocator.Get<IScenesService>();
                 scenesService.Load<SceneGameOver>();
             }
+        }
+
+        public void ResetGameOver()
+        {
+            score = 0;
+            lives = 3;
         }
 
         public void IncreaseLevel()
