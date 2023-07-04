@@ -60,6 +60,14 @@ namespace Scenes
         {
             base.Update(gameTime);
 
+            // Vérifier si toutes les briques sont détruites
+            bool allBricksDestroyed = AreAllBricksDestroyed();
+
+            if (allBricksDestroyed)
+            {
+                _gameManager.IncreaseLevel();
+                Load();
+            }
         }
 
         public override void Draw()

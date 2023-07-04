@@ -75,6 +75,7 @@ namespace BrickBreaker
 
             _scenesService.Register<SceneMenu>();
             _scenesService.Register<SceneGame>();
+            _scenesService.Register<SceneWin>();
             _scenesService.Register<SceneGameOver>();
 
 
