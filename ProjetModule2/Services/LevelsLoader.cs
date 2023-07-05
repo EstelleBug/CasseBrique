@@ -14,11 +14,11 @@ namespace Services
         private List<LevelData> _levels = new List<LevelData>();
 
         private LevelData _currentLevel;
+        private string _levelsDirectory = "Levels";
         public void Load() 
         { 
             MemoryStream stream;
-            string[] files = Directory.GetFiles("Levels");
-            //string[] files = Directory.GetFiles("/Users/estel/OneDrive/Documents/Formation_JV/C#/Projet/ProjetModule2/ProjetModule2/Levels/");
+            string[] files = Directory.GetFiles(_levelsDirectory);
 
             for (int i  = 0; i < files.Length; i++)
             {
@@ -57,17 +57,54 @@ namespace Services
             
         }
 
+        public LevelData CreateNewLevelData(int height, int width)
+        {
+            LevelData newLevelData = new LevelData();
+            newLevelData.name = $"Level {_levels.Count + 1}";
+            newLevelData.height = height;
+            newLevelData.width = width;
+            newLevelData.bricks = new List<List<int>>();
+
+            // Add logic to generate the brick pattern for the new level
+            // For example, you can initialize all values to 1 (BrickRed)
+            for (int row = 0; row < newLevelData.height; row++)
+            {
+                List<int> rowBricks = new List<int>();
+                for (int col = 0; col < newLevelData.width; col++)
+                {
+                    rowBricks.Add(1); // 1 represents BrickRed, you can customize this
+                }
+                newLevelData.bricks.Add(rowBricks);
+            }
+            Debug.WriteLine("Level created");
+            return newLevelData;
+        }
+
+
+        public void SaveLevelToJson(LevelData levelData)
+        {
+            Debug.WriteLine("Level saved");
+            string filePath = Path.Combine(_levelsDirectory, $"level_{_levels.Count + 1}.json");
+            Debug.WriteLine(filePath);
+
+            using (FileStream fs = new FileStream(filePath, FileMode.Create))
+            {
+                DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(LevelData));
+                serializer.WriteObject(fs, levelData);
+            }
+        }
+
         [DataContract]
         public class LevelData
         {
             [DataMember]
-            public string name { get; private set; }
+            public string name { get; set; }
             [DataMember]
-            public int height { get; private set; }
+            public int height { get; set; }
             [DataMember]
-            public int width { get; private set; }
+            public int width { get; set; }
             [DataMember]
-            public List<List<int>> bricks { get; private set;}
+            public List<List<int>> bricks { get; set;}
 
             public override string ToString()
             {

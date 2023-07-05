@@ -1,6 +1,7 @@
 ﻿using BrickBreaker;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 
 
@@ -45,6 +46,18 @@ namespace Services
             Vector2 reflectedVelocity = velocity - 2f * dotProduct * normal;
 
             return reflectedVelocity;
+        }
+
+        // Méthode pour effectuer une rotation d'un vecteur en utilisant un angle en radians
+        public Vector2 RotateVector(Vector2 vector, float angleRad)
+        {
+            float cos = (float)Math.Cos(angleRad);
+            float sin = (float)Math.Sin(angleRad); 
+
+            return new Vector2(
+                vector.X * cos + vector.Y * sin,
+                -vector.X * sin + vector.Y * cos
+            );
         }
 
         public Vector2 BallBounceOn(Rectangle otherCollisionBox, GameTime gameTime, Vector2 position, Vector2 velocity, float speed, Texture2D texture)

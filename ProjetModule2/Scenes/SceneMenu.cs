@@ -11,34 +11,31 @@ namespace Scenes
     {
         private bool _EnterPressed = false;
         private Button ButtonPlay;
+        private Button ButtonOptions;
 
         public void onClickPlay(Button pSender)
         {
             IScenesService scenesService = ServiceLocator.Get<IScenesService>();
             scenesService.Load<SceneGame>();
         }
+        public void onClickOptions(Button pSender)
+        {
+            IScenesService scenesService = ServiceLocator.Get<IScenesService>();
+            scenesService.Load<SceneBuildLevel>();
+        }
 
         public override void Load()
         {
             base.Load();
 
-            ButtonPlay = new Button();
+            ButtonPlay = new Button("PlayButton", new Vector2((Main._screenSize.X / 2), 200));
             ButtonPlay.onClick = onClickPlay;
+            ButtonOptions = new Button("OptionsButton", new Vector2((Main._screenSize.X / 2), 300));
+            ButtonOptions.onClick = onClickOptions;
         }
 
         public override void Update(GameTime gameTime)
         {
-
-            KeyboardState ks = Keyboard.GetState();
-            if (ks.IsKeyDown(Keys.Enter) && !_EnterPressed)
-            {
-                Debug.WriteLine("Enter pressed");
-
-                IScenesService scenesService = ServiceLocator.Get<IScenesService>();
-                scenesService.Load<SceneGame>();
-            }
-
-            _EnterPressed = ks.IsKeyDown(Keys.Enter);
 
             base.Update(gameTime);
         }

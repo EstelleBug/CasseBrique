@@ -17,6 +17,11 @@ namespace BrickBreaker
 
         public Rectangle CollisionBox => new Rectangle((int)(position.X - texture.Width / 2), (int)(position.Y - texture.Height / 2), (int)texture.Width, (int)texture.Height);
 
+        public Rectangle LeftZone => new Rectangle((int)(position.X - texture.Width / 3), (int)(position.Y - texture.Height / 2), (int)(texture.Width / 6), (int)texture.Height);
+        public Rectangle MidLeftZone => new Rectangle((int)(position.X - texture.Width / 6), (int)(position.Y - texture.Height / 2), (int)(texture.Width / 3), (int)texture.Height);
+        public Rectangle MidRightZone => new Rectangle((int)(position.X + texture.Width / 6), (int)(position.Y - texture.Height / 2), (int)(texture.Width / 3), (int)texture.Height);
+        public Rectangle RightZone => new Rectangle((int)(position.X + texture.Width / 3), (int)(position.Y - texture.Height / 2), (int)(texture.Width / 6), (int)texture.Height);
+
         public Pad()
         {
             texture = ServiceLocator.Get <IAssetsManager>().GetAsset<Texture2D>("raquette");
@@ -66,6 +71,7 @@ namespace BrickBreaker
         {
             SpriteBatch sb = ServiceLocator.Get<SpriteBatch>();
             sb.Draw(texture, position - new Vector2(texture.Width, texture.Height) / 2, Color.White);
+            
         }
     }
 }

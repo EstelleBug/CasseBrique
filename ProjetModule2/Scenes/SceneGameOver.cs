@@ -3,35 +3,47 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 using Services;
 using System.Diagnostics;
+using BrickBreaker;
 
 namespace Scenes
 {
     internal class SceneGameOver : Scene
     {
+        private GameManager _gameManager;
         private bool _SpacePressed = false;
+        private Button ButtonMenu;
+
+        public void onClickMenu(Button pSender)
+        {
+            IScenesService scenesService = ServiceLocator.Get<IScenesService>();
+            scenesService.Load<SceneMenu>();
+            _gameManager.ResetGame();
+
+        }
+
         public override void Load()
         {
+            base.Load();
+            _gameManager = (GameManager)ServiceLocator.Get<GameManager>();
+
+            ButtonMenu = new Button("MenuButton", new Vector2((Main._screenSize.X / 2), 300));
+            ButtonMenu.onClick = onClickMenu;
         }
 
         public override void Update(GameTime gameTime)
         {
-            KeyboardState ks = Keyboard.GetState();
-            if (ks.IsKeyDown(Keys.Space) && !_SpacePressed)
-            {
-                Debug.WriteLine("Space pressed");
+            base.Update(gameTime);
 
-                IScenesService scenesService = ServiceLocator.Get<IScenesService>();
-                scenesService.Load<SceneMenu>();
-            }
-
-            _SpacePressed = ks.IsKeyDown(Keys.Space);
         }
 
         public override void Draw()
         {
+            base.Draw();
             SpriteBatch sb = ServiceLocator.Get<SpriteBatch>();
             SpriteFont MainFont = ServiceLocator.Get<IAssetsManager>().GetAsset<SpriteFont>("PixelFont");
             sb.DrawString(MainFont, "Game Over", new Vector2(1, 1), Color.White);
+            sb.DrawString(MainFont, $"Score {_gameManager.Score}", new Vector2(Main._screenSize.X/2 - 20, 200), Color.White);
+
         }
 
         public override void Unload()

@@ -113,8 +113,47 @@ namespace BrickBreaker
 
             foreach (Pad pad in Scene.GetGameObjects<Pad>())
             {
-                velocity = collisionManager.BallBounceOn(pad.CollisionBox, gameTime, position, velocity, _speed, texture);
+                //velocity = collisionManager.BallBounceOn(pad.CollisionBox, gameTime, position, velocity, _speed, texture);
+                if (collisionManager.BounceOn(pad.LeftZone, gameTime, position, velocity, _speed, texture))
+                {
+                    int angle = -45;
+                    float angleRad = MathHelper.ToRadians(angle);
 
+                    Debug.WriteLine("left");
+
+                    // Ajuster la direction de la balle pour l'impact sur la zone de gauche du pad
+                    velocity = collisionManager.RotateVector(velocity, angleRad);
+                }
+                else if (collisionManager.BounceOn(pad.MidLeftZone, gameTime, position, velocity, _speed, texture))
+                {
+                    int angle = -30;
+                    float angleRad = MathHelper.ToRadians(angle);
+
+                    Debug.WriteLine("Midleft");
+
+                    // Ajuster la direction de la balle pour l'impact sur la zone du milieu gauche du pad
+                    velocity = collisionManager.RotateVector(velocity, angleRad);
+                }
+                else if (collisionManager.BounceOn(pad.MidRightZone, gameTime, position, velocity, _speed, texture))
+                {
+                    int angle = 30;
+                    float angleRad = MathHelper.ToRadians(angle);
+
+                    Debug.WriteLine("MidRight");
+
+                    // Ajuster la direction de la balle pour l'impact sur la zone du milieu droit du pad
+                    velocity = collisionManager.RotateVector(velocity, angleRad);
+                }
+                else if (collisionManager.BounceOn(pad.RightZone, gameTime, position, velocity, _speed, texture))
+                {
+                    int angle = -45;
+                    float angleRad = MathHelper.ToRadians(angle);
+
+                    Debug.WriteLine("right");
+
+                    // Ajuster la direction de la balle pour l'impact sur la zone de droite du pad
+                    velocity = collisionManager.RotateVector(velocity, angleRad);
+                }
             }
 
             Bounce(Main._screenSize);

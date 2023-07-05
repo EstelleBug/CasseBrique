@@ -8,6 +8,7 @@ namespace Services
     public interface IScenesService
     {
         public void Load<T>() where T : Scene;
+        public Type GetCurrentSceneType();
     }
     public class ScenesService : IScenesService
     {
@@ -38,6 +39,11 @@ namespace Services
         {
             if (_currentScene == null) throw new Exception("Scene not loaded");
             _currentScene.Draw();
+        }
+
+        public Type GetCurrentSceneType()
+        {
+            return _currentScene.GetType();
         }
     }
 }

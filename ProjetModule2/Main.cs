@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Scenes;
 using Services;
+using System;
 using System.Diagnostics;
 
 namespace BrickBreaker
@@ -71,12 +72,16 @@ namespace BrickBreaker
             _assetManager.LoadAsset<Texture2D>("bonus_vie2", Content);
             _assetManager.LoadAsset<Texture2D>("bonus_disco", Content);
             _assetManager.LoadAsset<Texture2D>("malus", Content);
-            _assetManager.LoadAsset<Texture2D>("button", Content);
+            _assetManager.LoadAsset<Texture2D>("PlayButton", Content);
+            _assetManager.LoadAsset<Texture2D>("ExitButton", Content);
+            _assetManager.LoadAsset<Texture2D>("MenuButton", Content);
+            _assetManager.LoadAsset<Texture2D>("OptionsButton", Content);
 
             _scenesService.Register<SceneMenu>();
             _scenesService.Register<SceneGame>();
             _scenesService.Register<SceneWin>();
             _scenesService.Register<SceneGameOver>();
+            _scenesService.Register<SceneBuildLevel>();
 
 
             _scenesService.Load<SceneMenu>();
@@ -85,8 +90,10 @@ namespace BrickBreaker
 
         protected override void Update(GameTime gameTime)
         {
+
             _scenesService.Update(gameTime);
             base.Update(gameTime);
+
         }
 
         protected override void Draw(GameTime gameTime)

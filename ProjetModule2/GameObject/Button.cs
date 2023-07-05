@@ -22,10 +22,10 @@ namespace BrickBreaker
         private MouseState oldMouseState;
         public onClick onClick { get; set; }
 
-        public Button()
+        public Button (string textureName, Vector2 position)
         {
-            texture = ServiceLocator.Get<IAssetsManager>().GetAsset<Texture2D>("button");
-            position = new Vector2((Main._screenSize.X / 2), (Main._screenSize.Y / 2));
+            texture = ServiceLocator.Get<IAssetsManager>().GetAsset<Texture2D>(textureName);
+            this.position = position;
             isHover = false;
             oldMouseState = Mouse.GetState();
             Scene.Add(this);
