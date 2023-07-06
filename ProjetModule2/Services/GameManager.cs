@@ -1,4 +1,5 @@
-﻿using Scenes;
+﻿using Microsoft.Xna.Framework;
+using Scenes;
 using System.Diagnostics;
 using static Services.LevelsLoader;
 
@@ -11,6 +12,9 @@ namespace Services
         private int level;
         private LevelsLoader _levelsLoader;
 
+        private int _currentLevelIndex;
+        private int _totalLevel;
+
         public int Score => score;
         public int Lives => lives;
         public int Level => level;
@@ -20,6 +24,19 @@ namespace Services
             score = 0;
             lives = 3;
             level = 1;
+
+        }
+
+        public void Load()
+        {
+            _levelsLoader = (LevelsLoader)ServiceLocator.Get<LevelsLoader>();
+
+        }
+
+        public void Update(GameTime gameTime)
+        {
+            _currentLevelIndex = _levelsLoader.GetLevels().IndexOf(_levelsLoader.GetCurrentLevel().name) +1;
+            _totalLevel = _levelsLoader.GetLevels().Count;
         }
 
 
@@ -51,20 +68,20 @@ namespace Services
             IScenesService scenesService = ServiceLocator.Get<IScenesService>();
 
             _levelsLoader = (LevelsLoader)ServiceLocator.Get<LevelsLoader>();
-            int currentLevelIndex = _levelsLoader.GetLevels().IndexOf(_levelsLoader.GetCurrentLevel().name);
-            int nextLevelIndex = currentLevelIndex + 1;
+            int nextLevelIndex = _currentLevelIndex + 1;
 
-            Debug.WriteLine("current"+currentLevelIndex);
+            Debug.WriteLine("current"+ _currentLevelIndex);
             Debug.WriteLine("next"+nextLevelIndex);
-            Debug.WriteLine("total leval"+_levelsLoader.GetLevels().Count);
+            Debug.WriteLine("total level "+_levelsLoader.GetLevels().Count);
 
             if (nextLevelIndex < _levelsLoader.GetLevels().Count)
             {
                 level++;
                 string nextLevelName = _levelsLoader.GetLevels()[nextLevelIndex];
                 _levelsLoader.SetCurrentLevel(nextLevelName);
+                Debug.WriteLine(nextLevelName);
             }
-            else if (nextLevelIndex > _levelsLoader.GetLevels().Count && scenesService.GetCurrentSceneType() == typeof(SceneGame))
+            else if (nextLevelIndex == _levelsLoader.GetLevels().Count && scenesService.GetCurrentSceneType() == typeof(SceneGame))
             {
                 scenesService.Load<SceneWin>();
             }
@@ -78,24 +95,26 @@ namespace Services
                 _levelsLoader.Load();
 
             }
+            _currentLevelIndex = nextLevelIndex;
         }
 
         public void DecreaseLevel()
         {
             _levelsLoader = (LevelsLoader)ServiceLocator.Get<LevelsLoader>();
-            int currentLevelIndex = _levelsLoader.GetLevels().IndexOf(_levelsLoader.GetCurrentLevel().name);
-            int previousLevelIndex = currentLevelIndex - 1;
+            int previousLevelIndex = _currentLevelIndex - 1;
 
-            Debug.WriteLine("current" + currentLevelIndex);
+            Debug.WriteLine("current" + _currentLevelIndex);
             Debug.WriteLine("next" + previousLevelIndex);
             Debug.WriteLine(_levelsLoader.GetLevels().Count);
 
-            if (currentLevelIndex > 0)
+            if (_currentLevelIndex > 0)
             {
                 level--;
                 string previousLevelName = _levelsLoader.GetLevels()[previousLevelIndex];
                 _levelsLoader.SetCurrentLevel(previousLevelName);
             }
+
+            _currentLevelIndex = previousLevelIndex;
         }
 
         public void ResetGame()

@@ -66,10 +66,10 @@ namespace Scenes
             {
                 if (gameObject is Brick)
                 {
-                    return false; // Il reste encore des briques, donc le niveau n'est pas terminé
+                    return false; // bricks remaining
                 }
             }
-            return true; // Toutes les briques ont été détruites
+            return true; // no bricks 
         }
     }
 

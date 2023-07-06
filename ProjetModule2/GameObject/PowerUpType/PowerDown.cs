@@ -16,7 +16,6 @@ namespace BrickBreaker
 
         public override void Update(GameTime gameTime)
         {
-            GameManager gameManager = ServiceLocator.Get<GameManager>();
             CollisionManager collisionManager = ServiceLocator.Get<CollisionManager>();
             base.Update(gameTime);
 
@@ -25,7 +24,7 @@ namespace BrickBreaker
                 if (collisionManager.BounceOn(pad.CollisionBox, gameTime, position, velocity, _speed, texture))
                 {
                     free = true;
-                    // Transforme 5% des briques en briques malus
+                    // Transform 5% of the bricks in BrickPowerDown
                     Brick.TransformBricksToPowerDown(0.05f);
 
                 }

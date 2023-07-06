@@ -10,7 +10,6 @@ namespace Scenes
     internal class SceneGameOver : Scene
     {
         private GameManager _gameManager;
-        private bool _SpacePressed = false;
         private Button ButtonMenu;
 
         public void onClickMenu(Button pSender)

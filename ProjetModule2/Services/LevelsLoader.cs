@@ -25,7 +25,9 @@ namespace Services
                 stream = new MemoryStream(Encoding.UTF8.GetBytes(File.ReadAllText(files[i])));
                 DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(LevelData));
                 _levels.Add((LevelData)serializer.ReadObject(stream));
+                Debug.WriteLine(files[i]);
             }
+
         }
 
         public List<string> GetLevels()
@@ -36,6 +38,7 @@ namespace Services
                 levelsNames.Add(level.name);
             }
             return levelsNames;
+
         }   
 
         public LevelData GetCurrentLevel()
@@ -60,19 +63,18 @@ namespace Services
         public LevelData CreateNewLevelData(int height, int width)
         {
             LevelData newLevelData = new LevelData();
-            newLevelData.name = $"Level {_levels.Count + 1}";
+            newLevelData.name = $"level_{_levels.Count + 1}";
             newLevelData.height = height;
             newLevelData.width = width;
             newLevelData.bricks = new List<List<int>>();
 
-            // Add logic to generate the brick pattern for the new level
-            // For example, you can initialize all values to 1 (BrickRed)
+            // initialize all values to 1 (BrickRed)
             for (int row = 0; row < newLevelData.height; row++)
             {
                 List<int> rowBricks = new List<int>();
                 for (int col = 0; col < newLevelData.width; col++)
                 {
-                    rowBricks.Add(1); // 1 represents BrickRed, you can customize this
+                    rowBricks.Add(1);
                 }
                 newLevelData.bricks.Add(rowBricks);
             }
@@ -86,6 +88,23 @@ namespace Services
             Debug.WriteLine("Level saved");
             string filePath = Path.Combine(_levelsDirectory, $"level_{_levels.Count + 1}.json");
             Debug.WriteLine(filePath);
+
+            using (FileStream fs = new FileStream(filePath, FileMode.Create))
+            {
+                DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(LevelData));
+                serializer.WriteObject(fs, levelData);
+            }
+        }
+
+        public void SaveExistingLevel(LevelData levelData)
+        {
+            string filePath = Path.Combine(_levelsDirectory, $"{_currentLevel.name}.json");
+            Debug.WriteLine(filePath);
+
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
 
             using (FileStream fs = new FileStream(filePath, FileMode.Create))
             {

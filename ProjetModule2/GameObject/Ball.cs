@@ -4,14 +4,13 @@ using Scenes;
 using Services;
 using System;
 using System.Diagnostics;
-using System.Linq;
 
 namespace BrickBreaker
 {
     public class Ball : IGameObject
     {
         private Random random = new Random();
-        private int freeBrickCount = 0;
+        private int _freeBrickCount = 0;
 
         private float _speed = 300f;
         public Vector2 velocity = Vector2.Zero;
@@ -21,18 +20,18 @@ namespace BrickBreaker
         public bool sticked = true;
         private bool _colorChange = false;
 
-        private bool isDiscoActive = false;
-        private float discoTimer = 0f;
-        private const float discoDuration = 3f;
+        private bool _isDiscoActive = false;
+        private float _discoTimer = 0f;
+        private const float _discoDuration = 3f;
 
-        private Color currentColor = Color.Red;
+        private Color _currentColor = Color.Red;
 
         public Rectangle CollisionBox => new Rectangle((int)(position.X - texture.Width / 2), (int)(position.Y - texture.Height / 2), (int)texture.Width, (int)texture.Height);
-        private float shakeDuration = 0.1f;
-        private float shakeTimer = 0f;
+        private float _shakeDuration = 0.1f;
+        private float _shakeTimer = 0f;
 
-        private Type[] powerUpTypes = { typeof(PowerUpLife), typeof(PowerDown), typeof(PowerUpDisco) };
-        private CollisionManager collisionManager = ServiceLocator.Get<CollisionManager>();
+        private Type[] _powerUpTypes = { typeof(PowerUpLife), typeof(PowerDown), typeof(PowerUpDisco) };
+        private CollisionManager _collisionManager = ServiceLocator.Get<CollisionManager>();
 
         public Ball(Vector2 Velocity)
         {
@@ -52,42 +51,42 @@ namespace BrickBreaker
 
             foreach (Brick brick in Scene.GetGameObjects<Brick>())
             {
-                if (collisionManager.BounceOn(brick.CollisionBox, gameTime, position, velocity, _speed, texture))
+                if (_collisionManager.BounceOn(brick.CollisionBox, gameTime, position, velocity, _speed, texture))
                 {
-                    velocity = collisionManager.BallBounceOn(brick.CollisionBox, gameTime, position, velocity, _speed, texture);
-
+                    velocity = _collisionManager.BallBounceOn(brick.CollisionBox, gameTime, position, velocity, _speed, texture);
+                    
+                    // Change ball color for every collision with a brick
                     _colorChange = true;
 
-                    if (isDiscoActive)
+                    if (_isDiscoActive)
                     {
                         brick.free = true;
-                        gameManager.IncreaseScore(20);
-                        // Changer la couleur de la balle en une couleur aléatoire à chaque mise à jour
+                        gameManager.IncreaseScore(30);
                     }
 
                     foreach (Brick otherBrick in Scene.GetGameObjects<Brick>())
                     {
                         otherBrick.isShaking = true;
-                        shakeTimer = shakeDuration;
+                        _shakeTimer = _shakeDuration;
                     }
 
-                    if (brick is BrickRed && currentColor == Color.Red)
+                    if (brick is BrickRed && _currentColor == Color.Red)
                     {
                         brick.free = true;
                         gameManager.IncreaseScore(20);
-                        freeBrickCount++;
+                        _freeBrickCount++;
                     }
-                    else if (brick is BrickGreen && currentColor == Color.Green)
+                    else if (brick is BrickGreen && _currentColor == Color.Green)
                     {
                         brick.free = true;
                         gameManager.IncreaseScore(20);
-                        freeBrickCount++;
+                        _freeBrickCount++;
                     }
-                    else if (brick is BrickBlue && currentColor == Color.Blue)
+                    else if (brick is BrickBlue && _currentColor == Color.Blue)
                     {
                         brick.free = true;
                         gameManager.IncreaseScore(20);
-                        freeBrickCount++;
+                        _freeBrickCount++;
                     }
                     else if (brick is BrickPowerDown)
                     {
@@ -96,16 +95,16 @@ namespace BrickBreaker
                         gameManager.IncreaseScore(5);
                     }
 
-                    // Si le nombre de briques "free" atteint 2, créez un bonus
-                    if (brick.free && freeBrickCount % 2 == 0)
+                    // If the number of brick free reach 2, create a random bonus
+                    if (brick.free && _freeBrickCount % 2 == 0)
                     {
                         Vector2 powerUpPosition = brick.position;
-                        // Sélectionner un type de bonus aléatoire
-                        Type randomPowerUpType = powerUpTypes[random.Next(powerUpTypes.Length)];
-                        // Créer une instance du type de bonus sélectionné
+                        // Select a random bonus type
+                        Type randomPowerUpType = _powerUpTypes[random.Next(_powerUpTypes.Length)];
+                        // Create an instance of bonus selected 
                         PowerUp powerUp = (PowerUp)Activator.CreateInstance(randomPowerUpType, powerUpPosition);
 
-                        freeBrickCount = 0;
+                        _freeBrickCount = 0;
                     }
 
                 }
@@ -113,46 +112,24 @@ namespace BrickBreaker
 
             foreach (Pad pad in Scene.GetGameObjects<Pad>())
             {
-                //velocity = collisionManager.BallBounceOn(pad.CollisionBox, gameTime, position, velocity, _speed, texture);
-                if (collisionManager.BounceOn(pad.LeftZone, gameTime, position, velocity, _speed, texture))
+                if (_collisionManager.BounceOn(pad.LeftZone, gameTime, position, velocity, _speed, texture))
                 {
-                    int angle = -45;
-                    float angleRad = MathHelper.ToRadians(angle);
-
-                    Debug.WriteLine("left");
-
-                    // Ajuster la direction de la balle pour l'impact sur la zone de gauche du pad
-                    velocity = collisionManager.RotateVector(velocity, angleRad);
+                    velocity = _collisionManager.BallBounceOn(pad.LeftZone, gameTime, position, velocity, _speed, texture);
                 }
-                else if (collisionManager.BounceOn(pad.MidLeftZone, gameTime, position, velocity, _speed, texture))
+                else if (_collisionManager.BounceOn(pad.MidLeftZone, gameTime, position, velocity, _speed, texture))
                 {
-                    int angle = -30;
-                    float angleRad = MathHelper.ToRadians(angle);
+                    velocity = _collisionManager.BallBounceOn(pad.MidLeftZone, gameTime, position, velocity, _speed, texture);
 
-                    Debug.WriteLine("Midleft");
-
-                    // Ajuster la direction de la balle pour l'impact sur la zone du milieu gauche du pad
-                    velocity = collisionManager.RotateVector(velocity, angleRad);
                 }
-                else if (collisionManager.BounceOn(pad.MidRightZone, gameTime, position, velocity, _speed, texture))
+                else if (_collisionManager.BounceOn(pad.MidRightZone, gameTime, position, velocity, _speed, texture))
                 {
-                    int angle = 30;
-                    float angleRad = MathHelper.ToRadians(angle);
+                    velocity = _collisionManager.BallBounceOn(pad.MidRightZone, gameTime, position, velocity, _speed, texture);
 
-                    Debug.WriteLine("MidRight");
-
-                    // Ajuster la direction de la balle pour l'impact sur la zone du milieu droit du pad
-                    velocity = collisionManager.RotateVector(velocity, angleRad);
                 }
-                else if (collisionManager.BounceOn(pad.RightZone, gameTime, position, velocity, _speed, texture))
+                else if (_collisionManager.BounceOn(pad.RightZone, gameTime, position, velocity, _speed, texture))
                 {
-                    int angle = -45;
-                    float angleRad = MathHelper.ToRadians(angle);
+                    velocity = _collisionManager.BallBounceOn(pad.RightZone, gameTime, position, velocity, _speed, texture);
 
-                    Debug.WriteLine("right");
-
-                    // Ajuster la direction de la balle pour l'impact sur la zone de droite du pad
-                    velocity = collisionManager.RotateVector(velocity, angleRad);
                 }
             }
 
@@ -160,37 +137,33 @@ namespace BrickBreaker
 
             if (_colorChange)
             {
-                currentColor = GetRandomColor();
+                _currentColor = GetRandomColor();
                 _colorChange = false;
             }
 
-            if (isDiscoActive)
+            if (_isDiscoActive)
             {
-                Debug.WriteLine("Discooo");
-                // Changer la couleur de la balle en une couleur aléatoire à chaque mise à jour
-                currentColor = GetDiscoColor();
+                // Change ball color every update
+                _currentColor = GetDiscoColor();
 
-                discoTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                _discoTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-                if (discoTimer >= discoDuration)
+                if (_discoTimer >= _discoDuration)
                 {
-                    discoTimer = 0f;
-                    //isDiscoActive = false;
-                    Debug.WriteLine("Disco time is up");
-
+                    _discoTimer = 0f;
                     SetDiscoActive(false);
                 }
             }
 
-            // Mettez à jour le timer de tremblement
-            if (shakeTimer > 0f)
+            // Update shake timer
+            if (_shakeTimer > 0f)
             {
-                shakeTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+                _shakeTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-                // Si le temps de tremblement est écoulé, arrêtez le tremblement et réinitialisez les briques
-                if (shakeTimer <= 0f)
+                // if shake timer is up, stop shaking & reset position brick
+                if (_shakeTimer <= 0f)
                 {
-                    shakeTimer = 0f;
+                    _shakeTimer = 0f;
 
                     foreach (Brick brick in Scene.GetGameObjects<Brick>())
                     {
@@ -232,12 +205,12 @@ namespace BrickBreaker
         public void SetDiscoActive(bool isActive)
         {
             Debug.WriteLine(isActive);
-            isDiscoActive = isActive;
+            _isDiscoActive = isActive;
 
-            if (isDiscoActive == false)
+            if (_isDiscoActive == false)
             {
-                // Réinitialiser la couleur de la balle à sa couleur par défaut
-                currentColor = Color.Red;
+                // reset ball color
+                _currentColor = Color.Red;
             }
         }
 
@@ -268,7 +241,7 @@ namespace BrickBreaker
         public void Draw()
         {
             SpriteBatch sb = ServiceLocator.Get<SpriteBatch>();
-            sb.Draw(texture, position - new Vector2(texture.Width, texture.Height) / 2, currentColor);
+            sb.Draw(texture, position - new Vector2(texture.Width, texture.Height) / 2, _currentColor);
         }
     }
 }

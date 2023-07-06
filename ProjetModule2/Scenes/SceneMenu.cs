@@ -9,7 +9,6 @@ namespace Scenes
 {
     public class SceneMenu : Scene
     {
-        private bool _EnterPressed = false;
         private Button ButtonPlay;
         private Button ButtonOptions;
 
@@ -42,10 +41,11 @@ namespace Scenes
 
         public override void Draw()
         {
+            base.Draw();
+
             //SpriteBatch sb = ServiceLocator.Get<SpriteBatch>();
             //SpriteFont MainFont = ServiceLocator.Get<IAssetsManager>().GetAsset<SpriteFont>("PixelFont");
             //sb.DrawString(MainFont, "This is the menu, press Enter to start the game", new Vector2(1, 1), Color.White);
-            base.Draw();
         }
 
         public override void Unload()

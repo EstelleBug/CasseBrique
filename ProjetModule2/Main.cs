@@ -60,7 +60,7 @@ namespace BrickBreaker
             ServiceLocator.Register<LevelsLoader>(_levelsLoader);
             _levelsLoader.Load();
 
-            _levelsLoader.SetCurrentLevel("Level 1");
+            _levelsLoader.SetCurrentLevel("level_1");
 
             _assetManager.LoadAsset<SpriteFont>("PixelFont", Content);
             _assetManager.LoadAsset<Texture2D>("balle", Content);
@@ -76,6 +76,10 @@ namespace BrickBreaker
             _assetManager.LoadAsset<Texture2D>("ExitButton", Content);
             _assetManager.LoadAsset<Texture2D>("MenuButton", Content);
             _assetManager.LoadAsset<Texture2D>("OptionsButton", Content);
+            _assetManager.LoadAsset<Texture2D>("CancelButton", Content);
+            _assetManager.LoadAsset<Texture2D>("SaveButton", Content);
+            _assetManager.LoadAsset<Texture2D>("LeftButton", Content);
+            _assetManager.LoadAsset<Texture2D>("RightButton", Content);
 
             _scenesService.Register<SceneMenu>();
             _scenesService.Register<SceneGame>();

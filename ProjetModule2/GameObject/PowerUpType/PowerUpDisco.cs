@@ -3,8 +3,6 @@ using Microsoft.Xna.Framework;
 using Scenes;
 using Services;
 using System.Linq;
-using System.Diagnostics;
-using System;
 
 namespace BrickBreaker
 {
@@ -20,7 +18,6 @@ namespace BrickBreaker
 
         public override void Update(GameTime gameTime)
         {
-            GameManager gameManager = ServiceLocator.Get<GameManager>();
             CollisionManager collisionManager = ServiceLocator.Get<CollisionManager>();
             base.Update(gameTime);
 
@@ -29,10 +26,8 @@ namespace BrickBreaker
                 if (collisionManager.BounceOn(pad.CollisionBox, gameTime, position, velocity, _speed, texture))
                 {
                     free = true;
-                    // Récupérer l'instance de Ball depuis la scène ou une autre source
                     Ball ball = Scene.GetGameObjects<Ball>().FirstOrDefault() as Ball;
 
-                    // Vérifier si l'instance de Ball a été trouvée
                     if (ball != null)
                     {
                         ball.SetDiscoActive(true);

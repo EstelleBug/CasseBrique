@@ -3,8 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Scenes;
 using Services;
-using System.Diagnostics;
-
 
 namespace BrickBreaker
 {
@@ -19,7 +17,7 @@ namespace BrickBreaker
         public bool free { get; set; }
 
         public bool isHover { get; private set; }
-        private MouseState oldMouseState;
+        private MouseState _oldMouseState;
         public onClick onClick { get; set; }
 
         public Button (string textureName, Vector2 position)
@@ -27,7 +25,7 @@ namespace BrickBreaker
             texture = ServiceLocator.Get<IAssetsManager>().GetAsset<Texture2D>(textureName);
             this.position = position;
             isHover = false;
-            oldMouseState = Mouse.GetState();
+            _oldMouseState = Mouse.GetState();
             Scene.Add(this);
         }
 
@@ -47,21 +45,19 @@ namespace BrickBreaker
                 if (!isHover)
                 {
                     isHover = true;
-                    Debug.WriteLine("Button is now Hover");
                 }
             }
             else
                 isHover = false;
 
             if (isHover && newMouseState.LeftButton == ButtonState.Pressed
-                && oldMouseState.LeftButton != ButtonState.Pressed)
+                && _oldMouseState.LeftButton != ButtonState.Pressed)
             {
-                Debug.WriteLine("Button is clicked");
                 if (onClick != null)
                     onClick(this);
             }
 
-            oldMouseState = newMouseState;
+            _oldMouseState = newMouseState;
         }
     }
 }

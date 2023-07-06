@@ -5,17 +5,25 @@ using Services;
 using System.Diagnostics;
 using BrickBreaker;
 using static Services.LevelsLoader;
+using System.Collections.Generic;
+using System;
 
 namespace Scenes
 {
     internal class SceneBuildLevel : Scene
     {
-        private bool _RightPressed = false;
-        private bool _LeftPressed = false;
-        private bool _SpacePressed = false;
+        private Button ButtonLeft;
+        private Button ButtonRight;
+        private Button ButtonCancel;
+        private Button ButtonSave;
+
+        private bool _MouseButtonPressed;
+
         private UIManager _uiManager;
         private GameManager _gameManager;
         private LevelsLoader _levelsLoader;
+
+        private List<Brick> _bricks = new List<Brick>();
         public override void Load()
         {
             base.Load();
@@ -26,13 +34,22 @@ namespace Scenes
 
             _uiManager = (UIManager)ServiceLocator.Get<UIManager>();
 
-            int brickWidth = 55;
-            int brickHeight = 20;
+            ButtonLeft = new Button("LeftButton", new Vector2((Main._screenSize.X / 2 - 80), 650));
+            ButtonLeft.onClick = onClickLeft;
+            ButtonRight = new Button("RightButton", new Vector2((Main._screenSize.X / 2 + 80), 650));
+            ButtonRight.onClick = onClickRight;
+            ButtonCancel = new Button("CancelButton", new Vector2((Main._screenSize.X - 60), 650));
+            ButtonCancel.onClick = onClickCancel;
+            ButtonSave = new Button("SaveButton", new Vector2((Main._screenSize.X -120), 650));
+            ButtonSave.onClick = onClickSave;
+
+            int brickWidth = 48;
+            int brickHeight = 16;
 
             int rows = levelData.height;
             int cols = levelData.width;
 
-
+            _bricks.Clear();
 
             for (int row = 0; row < rows; row++)
             {
@@ -42,17 +59,28 @@ namespace Scenes
                     int xPos = 40 + col * brickWidth;
                     int yPos = 40 + row * brickHeight;
 
+                    Brick brick = null;
+
                     switch (brickValue)
                     {
+                        case 0:
+                            brick = null;
+                            break;
                         case 1:
-                            new BrickRed(new Vector2(xPos, yPos));
+                            brick = new BrickRed(new Vector2(xPos, yPos));
+                           
                             break;
                         case 2:
-                            new BrickGreen(new Vector2(xPos, yPos));
+                            brick = new BrickGreen(new Vector2(xPos, yPos));
                             break;
                         case 3:
-                            new BrickBlue(new Vector2(xPos, yPos));
+                            brick = new BrickBlue(new Vector2(xPos, yPos));
                             break;
+                    }
+                    if (brick != null)
+                    {
+                        brick.Value = brickValue; // Assigner la valeur de la brique à partir des données du niveau
+                        _bricks.Add(brick); // Ajouter la brique à la liste des briques
                     }
                 }
             }
@@ -60,31 +88,87 @@ namespace Scenes
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
+            LevelData levelData = _levelsLoader.GetCurrentLevel();
 
-            KeyboardState ks = Keyboard.GetState();
-            if (ks.IsKeyDown(Keys.Right) && !_RightPressed)
-            {
-                Debug.WriteLine("Right pressed");
 
-                _gameManager.IncreaseLevel();
-                Load();
-            }
-            else if (ks.IsKeyDown(Keys.Left) && !_LeftPressed)
+            MouseState mouseState = Mouse.GetState();
+            if (mouseState.LeftButton == ButtonState.Pressed &&! _MouseButtonPressed)
             {
-                Debug.WriteLine("Left Pressed");
-                _gameManager.DecreaseLevel();
-                Load();
+                // Obtenir la position de la souris en pixels
+                Vector2 mousePosition = new Vector2(mouseState.X, mouseState.Y);
+
+                // Convertir la position de la souris en coordonnées de grille
+                Vector2 gridPosition = (mousePosition - new Vector2(40, 40) + new Vector2(48, 16) /2) / new Vector2(48, 16);
+
+                // Obtenir les indices de la brique dans le tableau
+                int row = (int)Math.Floor(gridPosition.Y);
+                int col = (int)Math.Floor(gridPosition.X);
+
+                // Vérifier si les indices sont valides et se trouvent dans les limites du tableau
+                if (row >= 0 && row < levelData.height && col >= 0 && col < levelData.width)
+                {
+                    if (levelData.bricks[row][col] < 3)
+                    {
+                        // Mettre à jour la valeur de la brique dans le tableau
+                        levelData.bricks[row][col] += 1;
+                    }
+                    else if (levelData.bricks[row][col] == 3)
+                    {
+                        levelData.bricks[row][col] = 0;
+                    }
+
+                    // Mettre à jour l'apparence de la brique
+                    Load();
+                }
+
             }
-            else if (ks.IsKeyDown(Keys.Space) && !_SpacePressed)
+            if (mouseState.LeftButton == ButtonState.Pressed)
+            { _MouseButtonPressed = true; }
+            else
+            { _MouseButtonPressed = false; }
+        }
+
+        public void onClickLeft(Button pSender)
+        {
+            Debug.WriteLine("Left Pressed");
+            _gameManager.DecreaseLevel();
+            Load();
+        }
+
+        public void onClickRight(Button pSender)
+        {
+            Debug.WriteLine("Right pressed");
+            _gameManager.IncreaseLevel();
+            Load();
+        }
+
+        public void onClickCancel(Button pSender)
+        {
+            Debug.WriteLine("delete level");
+
+        }
+
+        public void onClickSave(Button pSender)
+        {
+            Debug.WriteLine("save level");
+            LevelData levelData = _levelsLoader.GetCurrentLevel();
+
+            // Mettre à jour les données du niveau avec les nouvelles valeurs de briques
+            for (int row = 0; row < levelData.height; row++)
             {
-                Debug.WriteLine("Space Pressed");
-                LevelData _currentLevel = _levelsLoader.GetCurrentLevel();
-                _levelsLoader.SaveLevelToJson(_currentLevel);
+                for (int col = 0; col < levelData.width; col++)
+                {
+                    if (row < _bricks.Count / levelData.width && col < levelData.width)
+                    {
+                        // Mettre à jour la valeur de la brique dans le tableau JSON
+                        int brickValue = _bricks[row * levelData.width + col]?.Value ?? 0;
+                        levelData.bricks[row][col] = brickValue;
+                    }
+                }
             }
 
-            _RightPressed = ks.IsKeyDown(Keys.Right);
-            _LeftPressed = ks.IsKeyDown(Keys.Left);
-            _SpacePressed = ks.IsKeyDown(Keys.Space);
+            // Sauvegarder les nouvelles données du niveau
+            _levelsLoader.SaveExistingLevel(levelData);
         }
 
         public override void Draw()
@@ -93,7 +177,7 @@ namespace Scenes
             _uiManager.Draw();
             SpriteBatch sb = ServiceLocator.Get<SpriteBatch>();
             SpriteFont MainFont = ServiceLocator.Get<IAssetsManager>().GetAsset<SpriteFont>("PixelFont");
-            sb.DrawString(MainFont, "Build your own level", new Vector2(Main._screenSize.X/2 - 60, 1), Color.White);
+            sb.DrawString(MainFont, "Build your own level", new Vector2(Main._screenSize.X/2 - 70, 1), Color.White);
         }
 
         public override void Unload()

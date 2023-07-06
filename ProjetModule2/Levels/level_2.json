@@ -1,6 +1,6 @@
 ﻿{
-    "name": "Level 2",
-    "height":10,
+    "name": "level_2",
+    "height": 10,
     "width": 14,
     "bricks": [
         [ 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0 ],
