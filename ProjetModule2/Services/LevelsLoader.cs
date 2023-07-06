@@ -1,6 +1,4 @@
-﻿
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.Serialization;
@@ -14,7 +12,7 @@ namespace Services
         private List<LevelData> _levels = new List<LevelData>();
 
         private LevelData _currentLevel;
-        private string _levelsDirectory = "Levels";
+        private string _levelsDirectory = "C:\\Users\\estel\\OneDrive\\Documents\\Formation_JV\\C#\\Projet\\ProjetModule2\\ProjetModule2\\Levels";
         public void Load() 
         { 
             MemoryStream stream;
@@ -99,7 +97,6 @@ namespace Services
         public void SaveExistingLevel(LevelData levelData)
         {
             string filePath = Path.Combine(_levelsDirectory, $"{_currentLevel.name}.json");
-            Debug.WriteLine(filePath);
 
             if (File.Exists(filePath))
             {
@@ -110,6 +107,16 @@ namespace Services
             {
                 DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(LevelData));
                 serializer.WriteObject(fs, levelData);
+            }
+        }
+
+        public void DeleteLevel()
+        {
+            string filePath = Path.Combine(_levelsDirectory, $"{_currentLevel.name}.json");
+
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
             }
         }
 

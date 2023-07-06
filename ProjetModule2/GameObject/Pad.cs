@@ -25,7 +25,7 @@ namespace BrickBreaker
         public Pad()
         {
             texture = ServiceLocator.Get <IAssetsManager>().GetAsset<Texture2D>("raquette");
-            position = new Vector2(Main._screenSize.X / 2, Main._screenSize.Y - 50);
+            position = new Vector2(Main.screenSize.X / 2, Main.screenSize.Y - 50);
             ball = new Ball(Vector2.Zero);
             Scene.Add(this);
         }
@@ -44,7 +44,7 @@ namespace BrickBreaker
             }
             else if (ks.IsKeyDown(Keys.Right))
             {
-                if (position.X < Main._screenSize.X - (texture.Width /2) )
+                if (position.X < Main.screenSize.X - (texture.Width /2) )
                 { direction.X = +1; }
             }
                 

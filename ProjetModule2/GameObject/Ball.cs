@@ -43,7 +43,7 @@ namespace BrickBreaker
 
         public void Update(GameTime gameTime)
         {
-            if (sticked) return;
+            if (sticked) return; // If the ball is sticked, no need to update
 
             float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
             position += velocity * _speed * dt;
@@ -95,13 +95,13 @@ namespace BrickBreaker
                         gameManager.IncreaseScore(5);
                     }
 
-                    // If the number of brick free reach 2, create a random bonus
+                    // If the number of brick free reaches 2, create a random bonus
                     if (brick.free && _freeBrickCount % 2 == 0)
                     {
                         Vector2 powerUpPosition = brick.position;
                         // Select a random bonus type
                         Type randomPowerUpType = _powerUpTypes[random.Next(_powerUpTypes.Length)];
-                        // Create an instance of bonus selected 
+                        // Create an instance of the selected bonus
                         PowerUp powerUp = (PowerUp)Activator.CreateInstance(randomPowerUpType, powerUpPosition);
 
                         _freeBrickCount = 0;
@@ -133,7 +133,7 @@ namespace BrickBreaker
                 }
             }
 
-            Bounce(Main._screenSize);
+            Bounce(Main.screenSize);
 
             if (_colorChange)
             {
@@ -209,7 +209,7 @@ namespace BrickBreaker
 
             if (_isDiscoActive == false)
             {
-                // reset ball color
+                // reset ball color to default (red)
                 _currentColor = Color.Red;
             }
         }

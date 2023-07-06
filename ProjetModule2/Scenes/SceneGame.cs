@@ -1,7 +1,6 @@
 ﻿using BrickBreaker;
 using Microsoft.Xna.Framework;
 using Services;
-using System.Diagnostics;
 
 namespace Scenes
 
@@ -66,8 +65,6 @@ namespace Scenes
 
             if (allBricksDestroyed && _gameManager.Lives > 0)
             {
-                Debug.WriteLine(allBricksDestroyed);
-                Debug.WriteLine(_gameManager.Lives);
                 _gameManager.IncreaseLevel();
                 Load();
             }

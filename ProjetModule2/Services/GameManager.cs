@@ -7,23 +7,22 @@ namespace Services
 {
     internal class GameManager
     {
-        private int score;
-        private int lives;
-        private int level;
+        private int _score;
+        private int _lives;
+        private int _level;
         private LevelsLoader _levelsLoader;
 
         private int _currentLevelIndex;
-        private int _totalLevel;
 
-        public int Score => score;
-        public int Lives => lives;
-        public int Level => level;
+        public int Score => _score;
+        public int Lives => _lives;
+        public int Level => _level;
 
         public GameManager()
         {
-            score = 0;
-            lives = 3;
-            level = 1;
+            _score = 0;
+            _lives = 3;
+            _level = 1;
 
         }
 
@@ -36,26 +35,25 @@ namespace Services
         public void Update(GameTime gameTime)
         {
             _currentLevelIndex = _levelsLoader.GetLevels().IndexOf(_levelsLoader.GetCurrentLevel().name) +1;
-            _totalLevel = _levelsLoader.GetLevels().Count;
         }
 
 
 
         public void IncreaseScore(int amount)
         {
-            score += amount;
+            _score += amount;
         }
 
         public void IncreaseLives(int amount)
         {
-            lives += amount;
+            _lives += amount;
         }
 
         public void DecreaseLives()
         {
-            lives--;
+            _lives--;
 
-            if (lives <= 0)
+            if (_lives <= 0)
             {
                 IScenesService scenesService = ServiceLocator.Get<IScenesService>();
                 scenesService.Load<SceneGameOver>();
@@ -76,7 +74,7 @@ namespace Services
 
             if (nextLevelIndex < _levelsLoader.GetLevels().Count)
             {
-                level++;
+                _level++;
                 string nextLevelName = _levelsLoader.GetLevels()[nextLevelIndex];
                 _levelsLoader.SetCurrentLevel(nextLevelName);
                 Debug.WriteLine(nextLevelName);
@@ -88,11 +86,12 @@ namespace Services
             else if (nextLevelIndex == _levelsLoader.GetLevels().Count && scenesService.GetCurrentSceneType() == typeof(SceneBuildLevel))
             {
                 Debug.WriteLine("Level +1");
-                level++;
+                _level++;
                 LevelData newLevelData = _levelsLoader.CreateNewLevelData(6,22);
                 _levelsLoader.SaveLevelToJson(newLevelData);
-                _levelsLoader.SetCurrentLevel(newLevelData.name);
                 _levelsLoader.Load();
+                _levelsLoader.SetCurrentLevel(newLevelData.name);
+
 
             }
             _currentLevelIndex = nextLevelIndex;
@@ -109,7 +108,7 @@ namespace Services
 
             if (_currentLevelIndex > 0)
             {
-                level--;
+                _level--;
                 string previousLevelName = _levelsLoader.GetLevels()[previousLevelIndex];
                 _levelsLoader.SetCurrentLevel(previousLevelName);
             }
@@ -119,27 +118,27 @@ namespace Services
 
         public void ResetGame()
         {
-            score = 0;
-            lives = 3;
+            _score = 0;
+            _lives = 3;
 
-            level = 1;
+            _level = 1;
             _levelsLoader = (LevelsLoader)ServiceLocator.Get<LevelsLoader>();
             _levelsLoader.SetCurrentLevel("Level 1");
         }
 
         public int GetScore()
         {
-            return score;
+            return _score;
         }
 
         public int GetLives()
         {
-            return lives;
+            return _lives;
         }
 
         public int GetLevel()
         {
-            return level;
+            return _level;
         }
     }
 }

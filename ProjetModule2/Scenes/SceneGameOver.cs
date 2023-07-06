@@ -1,8 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 using Services;
-using System.Diagnostics;
 using BrickBreaker;
 
 namespace Scenes
@@ -25,7 +23,7 @@ namespace Scenes
             base.Load();
             _gameManager = (GameManager)ServiceLocator.Get<GameManager>();
 
-            ButtonMenu = new Button("MenuButton", new Vector2((Main._screenSize.X / 2), 300));
+            ButtonMenu = new Button("MenuButton", new Vector2((Main.screenSize.X / 2), 300));
             ButtonMenu.onClick = onClickMenu;
         }
 
@@ -41,7 +39,7 @@ namespace Scenes
             SpriteBatch sb = ServiceLocator.Get<SpriteBatch>();
             SpriteFont MainFont = ServiceLocator.Get<IAssetsManager>().GetAsset<SpriteFont>("PixelFont");
             sb.DrawString(MainFont, "Game Over", new Vector2(1, 1), Color.White);
-            sb.DrawString(MainFont, $"Score {_gameManager.Score}", new Vector2(Main._screenSize.X/2 - 20, 200), Color.White);
+            sb.DrawString(MainFont, $"Score {_gameManager.Score}", new Vector2(Main.screenSize.X/2 - 20, 200), Color.White);
 
         }
 

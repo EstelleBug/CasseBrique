@@ -2,8 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using Scenes;
 using Services;
-using System;
-using System.Diagnostics;
 
 namespace BrickBreaker
 {
@@ -18,7 +16,7 @@ namespace BrickBreaker
         private CollisionManager _collisionManager;
         private LevelsLoader _levelsLoader;
 
-        public static Point _screenSize = new Point(1240, 720);
+        public static Point screenSize = new Point(1240, 720);
 
         public Main()
         {
@@ -29,8 +27,8 @@ namespace BrickBreaker
 
         protected override void Initialize()
         {
-            _graphics.PreferredBackBufferWidth = _screenSize.X;
-            _graphics.PreferredBackBufferHeight = _screenSize.Y;
+            _graphics.PreferredBackBufferWidth = screenSize.X;
+            _graphics.PreferredBackBufferHeight = screenSize.Y;
             _graphics.ApplyChanges();
 
             base.Initialize();

@@ -1,9 +1,6 @@
 ﻿using BrickBreaker;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using Services;
-using System.Diagnostics;
 
 namespace Scenes
 {
@@ -27,9 +24,9 @@ namespace Scenes
         {
             base.Load();
 
-            ButtonPlay = new Button("PlayButton", new Vector2((Main._screenSize.X / 2), 200));
+            ButtonPlay = new Button("PlayButton", new Vector2((Main.screenSize.X / 2), 200));
             ButtonPlay.onClick = onClickPlay;
-            ButtonOptions = new Button("OptionsButton", new Vector2((Main._screenSize.X / 2), 300));
+            ButtonOptions = new Button("OptionsButton", new Vector2((Main.screenSize.X / 2), 300));
             ButtonOptions.onClick = onClickOptions;
         }
 

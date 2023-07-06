@@ -39,7 +39,7 @@ namespace BrickBreaker
 
             position += velocity * dt * _speed;
 
-            if (position.Y >= Main._screenSize.Y)
+            if (position.Y >= Main.screenSize.Y)
             {
                 free = true;
             }
